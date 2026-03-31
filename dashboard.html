@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - CarsMarketplace</title>
+    <link rel="stylesheet" href="css/style.css">`n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo"><img src="assets/images/logo.jpg" alt="Global Drive Africa"></a>
+            <div class="auth-nav">
+                <a href="index.html" class="btn btn-outline">Home</a>
+                <a href="#" id="logoutBtn" class="btn btn-main" style="margin-left: 10px;">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <ul>
+                <li><a href="#" class="active" data-target="overview">Overview</a></li>
+                <li><a href="#" data-target="installments">My Installments</a></li>
+                <li><a href="#" data-target="messages">Messages</a></li>
+                <li><a href="#" data-target="settings">Profile Settings</a></li>
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <h1 style="color: var(--secondary-color); margin-bottom: 30px;">Welcome, <span id="userName">User</span></h1>
+
+            <!-- Overvew -->
+            <section id="overview" class="dash-section">
+                <div style="display: flex; gap: 20px;">
+                    <div style="background: white; padding: 20px; border-radius: 8px; flex: 1; box-shadow: var(--shadow);">
+                        <h3>Active Installment Requests</h3>
+                        <p id="totalInstallments" style="font-size: 2rem; color: var(--primary-color);">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Installments -->
+            <section id="installments" class="dash-section hidden">
+                <h2>My Installment Requests</h2>
+                <div style="margin-top: 20px; overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Car ID</th>
+                                <th>Months</th>
+                                <th>Monthly (GHS)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="installmentsList">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Messages -->
+            <section id="messages" class="dash-section hidden">
+                <h2>My Messages</h2>
+                <div style="margin-top: 20px;">
+                    <div id="messagesList" style="background: white; padding: 20px; border-radius: 8px; box-shadow: var(--shadow); max-height: 500px; overflow-y: auto;">
+                    </div>
+                </div>
+                <div style="margin-top: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: var(--shadow);">
+                    <form id="msgForm">
+                        <textarea id="msgBody" rows="3" style="width: 100%; border: 1px solid var(--border); padding: 10px; border-radius: 4px;" required placeholder="Type message to Admin/Seller..."></textarea>
+                        <button type="submit" class="btn btn-main" style="margin-top: 10px;">Send Message</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Settings -->
+            <section id="settings" class="dash-section hidden">
+                <h2>Profile Settings</h2>
+                <p>Manage your account here.</p>
+                <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: var(--shadow); margin-top:20px;">
+                    Name: <strong id="profileName"></strong>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script type="module">
+        import { AuthAPI } from './js/auth/auth.js';
+        import { Session } from './js/security/crypto.js';
+        import { InstallmentAPI } from './js/installment/calculator.js';
+        import { ChatAPI } from './js/messaging/chat.js';
+        import { UI } from './js/ui/app.js';
+
+        // Check Auth
+        const session = AuthAPI.checkAuth('user');
+        if (!session) throw new Error("Abort");
+
+        document.getElementById('userName').innerText = session.name;
+        document.getElementById('profileName').innerText = session.name;
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', () => { AuthAPI.logout(); });
+
+        // Navigation
+        const links = document.querySelectorAll('.sidebar a');
+        const sections = document.querySelectorAll('.dash-section');
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                links.forEach(l => l.classList.remove('active'));
+                sections.forEach(s => s.classList.add('hidden'));
+
+                link.classList.add('active');
+                const target = link.getAttribute('data-target');
+                document.getElementById(target).classList.remove('hidden');
+            });
+        });
+
+        // Load Data
+        const loadDashboard = async () => {
+            // Installments
+            const items = await InstallmentAPI.getUserApplications();
+            document.getElementById('totalInstallments').innerText = items.length;
+            const tbody = document.getElementById('installmentsList');
+            if (items.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">No applications found.</td></tr>';
+            } else {
+                tbody.innerHTML = items.map(i => `
+                    <tr>
+                        <td>${new Date(i.date).toLocaleDateString()}</td>
+                        <td>Car #${i.carId}</td>
+                        <td>${i.months}</td>
+                        <td>${i.monthlyPayment.toFixed(2)}</td>
+                        <td><span style="padding: 5px 10px; border-radius: 20px; background: ${i.status === 'pending' ? '#f39c12' : (i.status === 'approved' ? '#2ecc71' : '#e74c3c')}; color: white; display: inline-block;">${i.status.toUpperCase()}</span></td>
+                    </tr>
+                `).join('');
+            }
+
+            // Messages
+            const msgs = await ChatAPI.getUserMessages();
+            const msgList = document.getElementById('messagesList');
+            if (msgs.length === 0) {
+                msgList.innerHTML = '<p>No messages yet.</p>';
+            } else {
+                msgList.innerHTML = msgs.map(m => {
+                    const isMe = m.senderId === session.userId;
+                    return `
+                        <div style="margin-bottom: 15px; text-align: ${isMe ? 'right' : 'left'};">
+                            <span style="font-size: 0.8rem; color: #999;">${new Date(m.timestamp).toLocaleString()}</span><br>
+                            <div style="display: inline-block; padding: 10px 15px; border-radius: 12px; max-width: 80%; background: ${isMe ? 'var(--primary-color)' : '#e2e8f0'}; color: ${isMe ? 'white' : 'black'};">
+                                <strong>${isMe ? 'Me' : UI.sanitize(m.senderName || 'Admin')}:</strong><br>
+                                ${UI.sanitize(m.text)}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        };
+
+        // Send Msg
+        document.getElementById('msgForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = document.getElementById('msgBody').value;
+            await ChatAPI.sendMessage('admin', text);
+            document.getElementById('msgBody').value = '';
+            loadDashboard(); // Refresh
+        });
+
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/233244240166" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+</body>
+</html>

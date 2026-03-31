@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Hyundai Cars in Ghana - Global drive Africa</title>
+    <meta name="description" content="Shop verified Hyundai vehicles including Elantra, Sonata, Tucson, and Santa Fe. Enjoy luxury on a budget.">
+    <link rel="stylesheet" href="css/style.css">`n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo"><img src="assets/images/logo.jpg" alt="Global Drive Africa"></a>
+            <ul class="nav-links">
+                <li><a href="inventory.html">Inventory</a></li>
+                <li><a href="toyota.html">Toyota</a></li>
+                <li><a href="honda.html">Honda</a></li>
+                <li><a href="hyundai.html" class="active">Hyundai</a></li>
+                <li><a href="trice.html">Bikes & Trice</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-hero hero-hyundai">
+            <h1>Elegant Hyundai Models</h1>
+            <p style="font-size: 1.2rem; margin-top: 15px;">Explore the latest Elantra, Sonata, and Tucson.</p>
+        </section>
+
+        <section class="container">
+            <h2 class="section-title">Hyundai Inventory</h2>
+            <div class="car-grid" id="brandGrid">
+                <p>Loading Hyundai cars...</p>
+            </div>
+            
+            <div style="margin-top: 60px; text-align: left; background: var(--white); padding: 30px; border-radius: 8px; box-shadow: var(--shadow);">
+                <h2 style="color: var(--secondary-color); margin-bottom: 15px;">Modern Design & Technology</h2>
+                <p style="color: var(--text-light);">Hyundai boasts exceptional and modern vehicle designs, packed with safety technology at relatively lower costs. Popular models like the Elantra and Santa Fe give you a premium driving experience. Discover our selection online and drive home your dream car today!</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2026 CarsMarketplace.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="js/ui/app.js"></script>
+    <script type="module">
+        import { dbInstance } from './js/database/db.js';
+        import { UI } from './js/ui/app.js';
+        import { dbReady } from './js/database/dummy-data.js';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await dbReady;
+                const allCars = await dbInstance.getByIndex('cars', 'brand', 'Hyundai');
+                const available = allCars.filter(c => c.status === 'available');
+                UI.renderCarCards(available, 'brandGrid');
+            } catch (err) {
+                document.getElementById('brandGrid').innerHTML = '<p>Error loading cars.</p>';
+            }
+        });
+    </script>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/233244240166" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+</body>
+</html>

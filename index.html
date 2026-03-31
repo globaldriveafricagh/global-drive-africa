@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global drive Africa - Buy & Sell Cars</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="description" content="The best platform to buy and sell verified cars in Ghana. Choose from over 1000+ top brands like Toyota, Honda, Hyundai.">
+
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo"><img src="assets/images/logo.jpg" alt="Global Drive Africa"></a>
+            <ul class="nav-links">
+                <li><a href="inventory.html">Inventory</a></li>
+                <li><a href="toyota.html">Toyota</a></li>
+                <li><a href="honda.html">Honda</a></li>
+                <li><a href="hyundai.html">Hyundai</a></li>
+                <li><a href="trice.html">Bikes & Trice</a></li>
+            </ul>
+            <div class="auth-nav" id="authNav">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h1>Find Your Dream Car Today</h1>
+            <p>Quality verified cars with flexible installment plans available.</p>
+            <form id="heroSearchForm" class="search-bar">
+                <select name="brand">
+                    <option value="">Any Brand</option>
+                    <option value="Toyota">Toyota</option>
+                    <option value="Honda">Honda</option>
+                    <option value="Hyundai">Hyundai</option>
+                    <option value="Trice">Bikes & Trice</option>
+                </select>
+                <input type="number" name="maxPrice" placeholder="Max Price (GHS)">
+                <button type="submit" class="btn btn-main">Search Cars</button>
+            </form>
+        </section>
+
+        <section class="container">
+            <h2 class="section-title">Featured Inventory: Cars, Buses & Motors</h2>
+            <div class="car-grid" id="latestCarsGrid">
+
+                <!-- Dynamic Content -->
+                <p>Loading cars...</p>
+            </div>
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="inventory.html" class="btn btn-outline" style="padding: 12px 30px; display: inline-block;">View All Cars</a>
+            </div>
+        </section>
+
+        <!-- ===== TRENDING NOW SECTION ===== -->
+        <section style="background: #0d0d0d; padding: 70px 20px; margin-top: 0;">
+            <div style="max-width: 1200px; margin: 0 auto;">
+
+                <!-- Header -->
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 40px;">
+                    <span style="background: var(--primary-color); color: white; font-size: 0.75rem; font-weight: 800; padding: 5px 14px; border-radius: 20px; letter-spacing: 1px; text-transform: uppercase; animation: pulse-badge 2s infinite;">🔥 TRENDING NOW</span>
+                    <h2 style="color: white; font-size: 2rem; font-weight: 800;">Hot Arrival — Just Landed</h2>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 0; border-radius: 16px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.6);">
+
+                    <!-- LEFT: Main Image + Thumbnails -->
+                    <div style="position: relative; background: #111;">
+                        <!-- Badge -->
+                        <div style="position: absolute; top: 20px; left: 20px; z-index: 10; display: flex; gap: 8px; flex-wrap: wrap;">
+                            <span style="background: var(--primary-color); color: white; padding: 5px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 700;">NEW ARRIVAL</span>
+                            <span style="background: #1a1a2e; color: #a0c4ff; padding: 5px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 700;">JAPAN IMPORT</span>
+                        </div>
+
+                        <!-- Main Image -->
+                        <img id="trendingMainImg"
+                             src="images-part2/IMG-20260331-WA0020.jpg"
+                             alt="Toyota Esquire 2018 - Main View"
+                             style="width: 100%; height: 420px; object-fit: cover; display: block; cursor: zoom-in; transition: transform 0.4s ease;"
+                             onmouseover="this.style.transform='scale(1.03)'"
+                             onmouseout="this.style.transform='scale(1)'">
+
+                        <!-- Thumbnail Strip -->
+                        <div style="display: flex; gap: 6px; padding: 10px; background: #1a1a1a;">
+                            <img src="images-part2/IMG-20260331-WA0016.jpg" alt="Angle Front"
+                                 onclick="document.getElementById('trendingMainImg').src=this.src; document.getElementById('trendingImgLabel').innerText=this.alt;"
+                                 style="width: calc(16.6% - 5px); height: 68px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: border 0.2s, transform 0.2s;"
+                                 onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='scale(1.05)'"
+                                 onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)'">
+                            <img src="images-part2/IMG-20260331-WA0017.jpg" alt="Rear View"
+                                 onclick="document.getElementById('trendingMainImg').src=this.src; document.getElementById('trendingImgLabel').innerText=this.alt;"
+                                 style="width: calc(16.6% - 5px); height: 68px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: border 0.2s, transform 0.2s;"
+                                 onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='scale(1.05)'"
+                                 onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)'">
+                            <img src="images-part2/IMG-20260331-WA0019.jpg" alt="Side Door"
+                                 onclick="document.getElementById('trendingMainImg').src=this.src; document.getElementById('trendingImgLabel').innerText=this.alt;"
+                                 style="width: calc(16.6% - 5px); height: 68px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: border 0.2s, transform 0.2s;"
+                                 onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='scale(1.05)'"
+                                 onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)'">
+                            <img src="images-part2/IMG-20260331-WA0022.jpg" alt="Interior"
+                                 onclick="document.getElementById('trendingMainImg').src=this.src; document.getElementById('trendingImgLabel').innerText=this.alt;"
+                                 style="width: calc(16.6% - 5px); height: 68px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: border 0.2s, transform 0.2s;"
+                                 onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='scale(1.05)'"
+                                 onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)'">
+                            <img src="images-part2/IMG-20260331-WA0021.jpg" alt="Voxy Front"
+                                 onclick="document.getElementById('trendingMainImg').src=this.src; document.getElementById('trendingImgLabel').innerText=this.alt;"
+                                 style="width: calc(16.6% - 5px); height: 68px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: border 0.2s, transform 0.2s;"
+                                 onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='scale(1.05)'"
+                                 onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)'">
+                            <img src="images-part2/IMG-20260331-WA0025.jpg" alt="Boot / Rear Hatch"
+                                 onclick="document.getElementById('trendingMainImg').src=this.src; document.getElementById('trendingImgLabel').innerText=this.alt;"
+                                 style="width: calc(16.6% - 5px); height: 68px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: border 0.2s, transform 0.2s;"
+                                 onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='scale(1.05)'"
+                                 onmouseout="this.style.borderColor='transparent'; this.style.transform='scale(1)'">
+                        </div>
+                        <p id="trendingImgLabel" style="text-align:center; color: #888; font-size: 0.8rem; padding: 6px 0; background: #1a1a1a;">Front View — Click thumbnails to explore</p>
+                    </div>
+
+                    <!-- RIGHT: Details Panel -->
+                    <div style="background: #181818; padding: 40px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <p style="color: var(--primary-color); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Toyota · Japan Auction Grade</p>
+                            <h3 style="color: white; font-size: 2rem; font-weight: 800; line-height: 1.2; margin-bottom: 6px;">Toyota Esquire / Voxy</h3>
+                            <p style="color: #aaa; font-size: 1rem; margin-bottom: 25px;">8-Seater Executive Minivan · 2017/2018 Model</p>
+
+                            <!-- Price -->
+                            <div style="background: #222; border-left: 4px solid var(--primary-color); padding: 16px 20px; border-radius: 8px; margin-bottom: 25px;">
+                                <p style="color: #888; font-size: 0.85rem; margin-bottom: 4px;">Starting From</p>
+                                <p style="color: var(--primary-color); font-size: 2.2rem; font-weight: 800;">GHS 120,000</p>
+                                <p style="color: #666; font-size: 0.8rem; margin-top: 4px;">Installment plans available · 6–36 months</p>
+                            </div>
+
+                            <!-- Specs Grid -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px;">
+                                <div style="background: #222; padding: 12px 15px; border-radius: 8px;">
+                                    <p style="color: #888; font-size: 0.75rem; margin-bottom: 3px;">Engine</p>
+                                    <p style="color: white; font-weight: 700; font-size: 0.95rem;">2.0L 4-Cylinder</p>
+                                </div>
+                                <div style="background: #222; padding: 12px 15px; border-radius: 8px;">
+                                    <p style="color: #888; font-size: 0.75rem; margin-bottom: 3px;">Transmission</p>
+                                    <p style="color: white; font-weight: 700; font-size: 0.95rem;">Automatic CVT</p>
+                                </div>
+                                <div style="background: #222; padding: 12px 15px; border-radius: 8px;">
+                                    <p style="color: #888; font-size: 0.75rem; margin-bottom: 3px;">Seats</p>
+                                    <p style="color: white; font-weight: 700; font-size: 0.95rem;">8 Passengers</p>
+                                </div>
+                                <div style="background: #222; padding: 12px 15px; border-radius: 8px;">
+                                    <p style="color: #888; font-size: 0.75rem; margin-bottom: 3px;">Drive</p>
+                                    <p style="color: white; font-weight: 700; font-size: 0.95rem;">2WD · 4WD Avail.</p>
+                                </div>
+                                <div style="background: #222; padding: 12px 15px; border-radius: 8px;">
+                                    <p style="color: #888; font-size: 0.75rem; margin-bottom: 3px;">Color</p>
+                                    <p style="color: white; font-weight: 700; font-size: 0.95rem;">Pearl Black</p>
+                                </div>
+                                <div style="background: #222; padding: 12px 15px; border-radius: 8px;">
+                                    <p style="color: #888; font-size: 0.75rem; margin-bottom: 3px;">Condition</p>
+                                    <p style="color: #2ecc71; font-weight: 700; font-size: 0.95rem;">✔ Grade 4.5/5</p>
+                                </div>
+                            </div>
+
+                            <!-- Features Chips -->
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;">
+                                <span style="background: #2a2a2a; color: #ccc; font-size: 0.75rem; padding: 5px 12px; border-radius: 20px;">Power Sliding Doors</span>
+                                <span style="background: #2a2a2a; color: #ccc; font-size: 0.75rem; padding: 5px 12px; border-radius: 20px;">Leather Interior</span>
+                                <span style="background: #2a2a2a; color: #ccc; font-size: 0.75rem; padding: 5px 12px; border-radius: 20px;">Touchscreen Navi</span>
+                                <span style="background: #2a2a2a; color: #ccc; font-size: 0.75rem; padding: 5px 12px; border-radius: 20px;">Backup Camera</span>
+                                <span style="background: #2a2a2a; color: #ccc; font-size: 0.75rem; padding: 5px 12px; border-radius: 20px;">Push Start</span>
+                                <span style="background: #2a2a2a; color: #ccc; font-size: 0.75rem; padding: 5px 12px; border-radius: 20px;">Dual A/C</span>
+                            </div>
+                        </div>
+
+                        <!-- CTA Buttons -->
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <a href="https://wa.me/233244240166?text=Hi%20GDA!%20I%27m%20interested%20in%20the%20Trending%20Toyota%20Esquire%2FVoxy%20minivan.%20Please%20send%20me%20more%20details." target="_blank"
+                               style="background: #25d366; color: white; text-align: center; padding: 16px; border-radius: 10px; font-weight: 800; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.3s, transform 0.2s; text-decoration: none;"
+                               onmouseover="this.style.background='#1ebe5d'; this.style.transform='translateY(-2px)'"
+                               onmouseout="this.style.background='#25d366'; this.style.transform='translateY(0)'">
+                                <i class="fab fa-whatsapp" style="font-size: 1.3rem;"></i> Inquire on WhatsApp
+                            </a>
+                            <a href="vehicle_request.html"
+                               style="background: transparent; color: white; text-align: center; padding: 14px; border-radius: 10px; font-weight: 600; border: 2px solid #444; display: block; transition: border-color 0.3s;"
+                               onmouseover="this.style.borderColor='var(--primary-color)'; this.style.color='var(--primary-color)'"
+                               onmouseout="this.style.borderColor='#444'; this.style.color='white'">
+                                Request Similar Vehicle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <style>
+            @keyframes pulse-badge {
+                0%, 100% { box-shadow: 0 0 0 0 rgba(255,106,0,0.5); }
+                50% { box-shadow: 0 0 0 8px rgba(255,106,0,0); }
+            }
+            @media (max-width: 900px) {
+                #trending-grid { grid-template-columns: 1fr !important; }
+            }
+        </style>
+
+        <div style="background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('images-part4/treee tyre_WhatsApp Image 2026-03-30 at 6.20.31 PM.jpeg'); background-size: cover; background-position: center; padding: 100px 20px; text-align: center; color: white; margin-top: var(--header-height);">
+            <h1 style="font-size: 3rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Trice & Motorbikes</h1>
+            <p style="font-size: 1.4rem; margin-top: 15px; font-weight: 300;">Quality Passenger and Cargo Tricycles.</p>
+        </div>
+
+        <section style="background: var(--primary-color); color: white; padding: 60px 20px; text-align: center;">
+            <div class="container" style="padding: 0;">
+                <h2>Need a Car but Low on Cash?</h2>
+                <p style="font-size: 1.2rem; margin: 20px 0;">We offer flexible installment plans spanning 6, 12, 24, and 36 months! Get instant pre-approval today.</p>
+                <a href="inventory.html" class="btn" style="background: white; color: var(--primary-color); font-weight: bold; padding: 15px 30px; border-radius: 4px; display: inline-block;">Apply For Installment</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Buying</h3>
+                <a href="inventory.html">Find Cars</a>
+                <a href="#">Why Choose GDA</a>
+                <a href="#">Customer Reviews</a>
+                <a href="#">Buying Guide</a>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <a href="help_center.html">Help Center</a>
+                <a href="tracking.html">Car Tracking</a>
+                <a href="protection_program.html">GDA Protection Program</a>
+                <a href="damage_report.html">Damage condition report</a>
+                <a href="shipping.html">Shipping Schedule</a>
+                <a href="chassis_check.html">Chassis Check</a>
+            </div>
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <a href="about.html">Our Company</a>
+                <a href="company_profile.html">Company Profile</a>
+                <a href="global_office.html">Global office</a>
+                <a href="csr_policy.html">CSR Policy</a>
+                <a href="privacy_policy.html">Privacy Policy</a>
+            </div>
+            <div class="footer-section">
+                <h3>Inquiry</h3>
+                <a href="contact.html">Contact</a>
+                <a href="vehicle_request.html">Vehicle Request</a>
+                <a href="inspection.html">Car Inspection</a>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                    <a href="https://www.youtube.com/@GlobalDriveAfrica" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/globaldriveafrica/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://x.com/AfricaDriv37644" target="_blank" title="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+                    <a href="https://www.tiktok.com/@globaldriveafrica" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                </div>
+                <a href="#">GDA News <i class="fas fa-external-link-alt" style="font-size: 0.7rem;"></i></a>
+                <a href="#">News Letter <i class="fas fa-external-link-alt" style="font-size: 0.7rem;"></i></a>
+                
+                <div class="country-select">
+                    <p style="margin-bottom: 5px; font-weight: 600;">Global office</p>
+                    <select>
+                        <option>Select a country</option>
+                        <option>Ghana</option>
+                        <option>Nigeria</option>
+                        <option>Kenya</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Global drive Africa. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/233244240166" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+
+    <script type="module" src="js/database/dummy-data.js"></script>
+    <script type="module" src="js/ui/app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+            caches.keys().then(function(names) {
+                for (let name of names) caches.delete(name);
+            });
+        }
+    </script>
+</body>
+</html>

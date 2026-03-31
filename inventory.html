@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - Global drive Africa</title>
+    <link rel="stylesheet" href="css/style.css">`n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .inventory-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 30px;
+        }
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+        .filter-section h3 { margin-bottom: 15px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        .filter-group { margin-bottom: 15px; }
+        .filter-group label { display: block; font-weight: 600; margin-bottom: 5px; font-size: 0.9em; }
+        .filter-group select, .filter-group input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 4px; }
+        
+        @media (max-width: 768px) {
+            .inventory-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo"><img src="assets/images/logo.jpg" alt="Global Drive Africa"></a>
+            <ul class="nav-links">
+                <li><a href="inventory.html">Inventory</a></li>
+                <li><a href="honda.html">Honda</a></li>
+                <li><a href="toyota.html">Toyota</a></li>
+                <li><a href="hyundai.html">Hyundai</a></li>
+                <li><a href="trice.html">Bikes & Trice</a></li>
+                <li><a href="cart.html">Cart</a></li>
+            </ul>
+            <div class="auth-nav" id="authNav"></div>
+        </nav>
+    </header>
+
+    <section class="page-hero hero-inventory">
+        <h1>Our Full Inventory</h1>
+        <p style="font-size: 1.2rem; margin-top: 15px;">Discover thousands of quality verified vehicles at the best prices.</p>
+    </section>
+
+    <main class="container" style="margin-top: 40px;">
+        <div class="inventory-layout">
+            <aside class="filter-section">
+                <h3>Filter Inventory</h3>
+                <form id="filterForm">
+                    <div class="filter-group">
+                        <label>Brand</label>
+                        <select name="brand" id="brandFilter">
+                            <option value="">All Brands</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="Honda">Honda</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Trice">Bikes & Trice</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Max Price (GHS)</label>
+                        <input type="number" name="maxPrice" id="priceFilter" placeholder="e.g 200000">
+                    </div>
+                    <div class="filter-group">
+                        <label>Transmission</label>
+                        <select name="transmission" id="transFilter">
+                            <option value="">Any</option>
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-main" style="width: 100%;">Apply Filters</button>
+                    <button type="reset" class="btn btn-outline" style="width: 100%; margin-top: 10px;" id="resetFilterBtn">Reset</button>
+                </form>
+            </aside>
+            <section>
+                <h2 style="margin-bottom: 20px; color: var(--secondary-color);">Available Cars (<span id="carCount">0</span>)</h2>
+                <div class="car-grid" id="inventoryGrid">
+                    <p>Loading inventory...</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script type="module" src="js/ui/app.js"></script>
+    <script type="module">
+        import { dbInstance } from './js/database/db.js';
+        import { UI } from './js/ui/app.js';
+        import { dbReady } from './js/database/dummy-data.js';
+
+        let allCars = [];
+
+        const loadInventory = async () => {
+            try {
+                await dbReady;
+                const urlParams = new URLSearchParams(window.location.search);
+                const initialBrand = urlParams.get('brand');
+                const initialMaxPrice = urlParams.get('maxPrice');
+
+                if (initialBrand) document.getElementById('brandFilter').value = initialBrand;
+                if (initialMaxPrice) document.getElementById('priceFilter').value = initialMaxPrice;
+
+                allCars = await dbInstance.getAll('cars');
+                allCars = allCars.filter(c => c.status === 'available');
+                applyFilters();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('inventoryGrid').innerHTML = '<p>Error loading cars.</p>';
+            }
+        };
+
+        const applyFilters = () => {
+            const brand = document.getElementById('brandFilter').value;
+            const maxPrice = Number(document.getElementById('priceFilter').value);
+            const transmission = document.getElementById('transFilter').value;
+
+            const filtered = allCars.filter(car => {
+                let match = true;
+                if (brand && car.brand !== brand) match = false;
+                if (maxPrice && car.price > maxPrice) match = false;
+                if (transmission && car.transmission !== transmission) match = false;
+                return match;
+            });
+
+            document.getElementById('carCount').innerText = filtered.length;
+            
+            if (filtered.length === 0) {
+                document.getElementById('inventoryGrid').innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: white; border-radius: 8px; box-shadow: var(--shadow);">
+                        <i class="fas fa-search" style="font-size: 3rem; color: #ccc; margin-bottom: 20px;"></i>
+                        <h2 style="color: var(--secondary-color);">No Vehicles Found</h2>
+                        <p style="color: var(--text-light); margin: 15px 0 25px;">We couldn't find any vehicles matching your criteria. Don't worry, we can source it for you!</p>
+                        <a href="vehicle_request.html" class="btn btn-main" style="padding: 12px 30px; display: inline-block;">Request a Vehicle Directly</a>
+                    </div>
+                `;
+            } else {
+                UI.renderCarCards(filtered, 'inventoryGrid');
+            }
+        };
+
+        document.getElementById('filterForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            applyFilters();
+        });
+
+        document.getElementById('resetFilterBtn').addEventListener('click', () => {
+             // Let the reset default behavior clear the form, then apply filter
+             setTimeout(applyFilters, 10);
+        });
+
+        document.addEventListener('DOMContentLoaded', loadInventory);
+    </script>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/233244240166" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+</body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Details - CarsMarketplace</title>
+    <link rel="stylesheet" href="css/style.css">`n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo"><img src="assets/images/logo.jpg" alt="Global Drive Africa"></a>
+            <ul class="nav-links">
+                <li><a href="inventory.html">Back to Inventory</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container" style="margin-top: calc(var(--header-height) + 20px); max-width: 1300px;">
+        <div id="loadingMsg">Loading car details...</div>
+        
+        <div id="carDetailsContainer" class="detail-container hidden">
+            <style>
+                :root {
+                    --sbt-red: #d32f2f;
+                    --sbt-bg: #f8f9fa;
+                    --sbt-border: #e0e0e0;
+                }
+                .detail-container {
+                    display: grid;
+                    grid-template-columns: 1fr 400px;
+                    gap: 25px;
+                    align-items: start;
+                }
+                .meta-info-bar {
+                    display: flex;
+                    justify-content: space-between;
+                    font-size: 0.85rem;
+                    color: var(--text-light);
+                    margin-bottom: 10px;
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid var(--sbt-border);
+                }
+                .car-main-title {
+                    font-size: 2.2rem;
+                    font-weight: 800;
+                    color: #1a1a1a;
+                    margin-bottom: 10px;
+                }
+                .badges-row {
+                    display: flex;
+                    gap: 8px;
+                    margin-bottom: 15px;
+                }
+                .badge {
+                    padding: 4px 10px;
+                    font-size: 0.75rem;
+                    font-weight: 700;
+                    border-radius: 4px;
+                    text-transform: uppercase;
+                }
+                .badge-red { background: var(--sbt-red); color: white; }
+                .badge-green { background: #2e7d32; color: white; }
+                
+                .stats-row {
+                    display: flex;
+                    gap: 15px;
+                    align-items: center;
+                    font-size: 0.9rem;
+                    color: var(--text-light);
+                    margin-bottom: 20px;
+                }
+                .stars { color: #fbc02d; margin-right: 5px; }
+
+                .main-img-container {
+                    position: relative;
+                    background: #000;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    aspect-ratio: 4/3;
+                }
+                #carImage {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                }
+                .thumbnail-section-title {
+                    font-size: 0.9rem;
+                    font-weight: 700;
+                    color: #444;
+                    margin: 20px 0 10px;
+                    text-transform: uppercase;
+                    border-left: 3px solid var(--primary-color);
+                    padding-left: 10px;
+                }
+                .thumbnail-grid {
+                    display: grid;
+                    grid-template-columns: repeat(6, 1fr);
+                    gap: 8px;
+                    margin-top: 10px;
+                }
+                .thumb-item {
+                    aspect-ratio: 1/1;
+                    border-radius: 4px;
+                    overflow: hidden;
+                    cursor: pointer;
+                    border: 2px solid transparent;
+                    transition: border-color 0.2s;
+                }
+                .thumb-item.active { border-color: var(--sbt-red); }
+                .thumb-item img { width: 100%; height: 100%; object-fit: cover; }
+
+                .right-sidebar {
+                    position: sticky;
+                    top: calc(var(--header-height) + 20px);
+                }
+                .price-box {
+                    background: white;
+                    padding: 25px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+                    border: 1px solid var(--sbt-border);
+                    margin-bottom: 20px;
+                }
+                .price-label { font-size: 1.1rem; font-weight: 600; color: #444; }
+                .price-value { color: var(--sbt-red); font-size: 2.5rem; font-weight: 900; line-height: 1.2; margin: 5px 0; }
+                .price-total { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
+                
+                .specs-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 15px;
+                    margin: 20px 0;
+                    padding-top: 15px;
+                    border-top: 1px solid var(--sbt-border);
+                }
+                .spec-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #555; }
+                .spec-icon { width: 16px; opacity: 0.6; }
+                .spec-val { font-weight: 700; color: #222; margin-left: auto; }
+
+                .calculator-card {
+                    background: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    border: 1px solid var(--sbt-border);
+                }
+                .calc-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+                
+                @media (max-width: 1000px) {
+                    .detail-container { grid-template-columns: 1fr; }
+                    .right-sidebar { position: static; }
+                    .thumbnail-grid { grid-template-columns: repeat(4, 1fr); }
+                }
+
+            </style>
+
+            <div class="gallery-section">
+                <div class="meta-info-bar">
+                    <span>Stock Id: <b id="stockId">---</b></span>
+                    <span>Inventory location: <b>ACCRA, GHANA 🇬🇭</b></span>
+                    <span><a href="#" style="color: var(--primary-color)">Share</a></span>
+                </div>
+                
+                <h1 id="carTitle" class="car-main-title">---</h1>
+                
+                <div class="badges-row">
+                    <span class="badge badge-red">Stock</span>
+                    <span class="badge badge-green">New Arrival</span>
+                </div>
+
+                <div class="stats-row">
+                    <span><span class="stars">★★★★★</span> <a href="#">(24 Reviews)</a></span>
+                    <span>👁 1.2k Views</span>
+                    <span>❤️ 15 Favorites</span>
+                </div>
+
+                <div class="main-img-container">
+                    <img id="carImage" src="" alt="Car Main View">
+                </div>
+                
+                <div class="thumbnail-section-title">Exterior Views</div>
+                <div id="thumbnailGrid" class="thumbnail-grid">
+                    <!-- Thumbnails injected here -->
+                </div>
+
+                <div class="thumbnail-section-title">Interior & Door Reference Images</div>
+                <div id="interiorThumbnailGrid" class="thumbnail-grid">
+                    <!-- Additional images injected here -->
+                </div>
+
+                <div style="margin-top: 30px; padding: 25px; background: white; border-radius: 8px; border: 1px solid var(--sbt-border);">
+                    <h3 style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;">Condition Report</h3>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <p style="font-weight: 700; color: #444; font-size: 0.9rem;">Interior Condition:</p>
+                            <p style="color: #666; font-size: 0.85rem;">Grade A - Very Clean, no tears or stains.</p>
+                        </div>
+                        <div>
+                            <p style="font-weight: 700; color: #444; font-size: 0.9rem;">Exterior Body:</p>
+                            <p style="color: #666; font-size: 0.85rem;">No major scratches, original factory paint.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="right-sidebar">
+                <div class="price-box">
+                    <div class="price-label">Price</div>
+                    <div id="carPrice" class="price-value">---</div>
+                    <div class="price-total">Vehicle Price: <span id="basePrice">---</span></div>
+                    
+                    <div class="specs-grid">
+                        <div class="spec-item"><span>📏</span> Mileage <span id="specMileage" class="spec-val">---</span></div>
+                        <div class="spec-item"><span>🚀</span> Engine <span id="specEngine" class="spec-val">1,980cc</span></div>
+                        <div class="spec-item"><span>⚙️</span> Trans. <span id="specTrans" class="spec-val">---</span></div>
+                        <div class="spec-item"><span>🏎️</span> Drive <span class="spec-val">2WD</span></div>
+                        <div class="spec-item"><span>🔧</span> Steering <span class="spec-val">LHD</span></div>
+                        <div class="spec-item"><span>⛽</span> Fuel <span id="specFuel" class="spec-val">---</span></div>
+                        <div class="spec-item"><span>🚪</span> Door <span class="spec-val">5</span></div>
+                        <div class="spec-item"><span>💺</span> Seats <span class="spec-val">5</span></div>
+                    </div>
+
+                    <button class="btn btn-main" id="detailsAddToCartBtn" style="width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 8px; margin-bottom: 12px;">🛒 Add to Cart</button>
+                    <button class="btn btn-outline" onclick="document.getElementById('messageForm').scrollIntoView()" style="width: 100%; padding: 15px; font-size: 1.1rem; border-radius: 8px;">✉ Message Seller</button>
+                </div>
+
+                <div class="calculator-card">
+                    <div class="calc-title">📊 Total Price Calculator</div>
+                    <div id="insAlert" class="alert hidden"></div>
+                    <form id="installmentForm">
+                        <input type="hidden" id="carPriceInput">
+                        <div class="form-group">
+                            <label>Down Payment (GHS)</label>
+                            <input type="number" id="downPayment" placeholder="Min 10,000" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <select id="months" required>
+                                <option value="6">6 Months</option>
+                                <option value="12">12 Months (Recommended)</option>
+                                <option value="24">24 Months</option>
+                                <option value="36">36 Months</option>
+                            </select>
+                        </div>
+                        <div style="background: var(--bg-light); padding: 15px; border-radius: 4px; margin-bottom: 15px; text-align: center;">
+                            <div style="font-size: 0.8rem; color: #666;">Estimated Monthly</div>
+                            <div id="calcResult" style="color: var(--sbt-red); font-size: 1.5rem; font-weight: 800;">GHS 0</div>
+                        </div>
+                        <button type="submit" class="btn btn-main" style="width: 100%; border-radius: 4px;">Get an estimate</button>
+                    </form>
+                </div>
+
+                <div style="margin-top: 20px; padding: 20px; background: white; border-radius: 8px; border: 1px solid var(--sbt-border);">
+                    <h3>Contact Admin</h3>
+                    <div id="msgAlert" class="alert hidden"></div>
+                    <form id="messageForm" style="margin-top: 15px;">
+                        <textarea id="messageText" rows="3" placeholder="I am interested in this car..." required style="width: 100%; padding: 10px; border: 1px solid var(--sbt-border); border-radius: 4px;"></textarea>
+                        <button type="submit" class="btn btn-outline" style="width: 100%; margin-top: 10px;">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { dbInstance } from './js/database/db.js';
+        import { InstallmentAPI } from './js/installment/calculator.js';
+        import { ChatAPI } from './js/messaging/chat.js';
+        import { Session } from './js/security/crypto.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const carId = urlParams.get('id');
+        let currentCar = null;
+
+        const loadCar = async () => {
+            if (!carId) {
+                document.getElementById('loadingMsg').innerText = "Car not found";
+                return;
+            }
+
+            try {
+                const car = await dbInstance.getById('cars', carId);
+                if (!car) throw new Error("Car not found");
+                currentCar = car;
+
+                // Load Gallery
+                const mainImg = document.getElementById('carImage');
+                const thumbGrid = document.getElementById('thumbnailGrid');
+                
+                mainImg.src = encodeURI(car.image);
+                mainImg.onerror = function() {
+                    this.src = 'https://via.placeholder.com/800x600?text=Car+Image';
+                };
+
+                // Thumbnails
+                if(car.images && car.images.length > 0) {
+                    // Exterior (first 4)
+                    const exterior = car.images.slice(0, 4);
+                    thumbGrid.innerHTML = exterior.map((img, idx) => `
+                        <div class="thumb-item ${idx === 0 ? 'active' : ''}" onclick="window.switchImage('${encodeURI(img)}', this)">
+                            <img src="${encodeURI(img)}">
+                        </div>
+                    `).join('');
+
+                    // Interior/Doors (the rest)
+                    const interiorThumbGrid = document.getElementById('interiorThumbnailGrid');
+                    if (car.images.length > 4) {
+                        const interior = car.images.slice(4);
+                        interiorThumbGrid.innerHTML = interior.map((img, idx) => `
+                            <div class="thumb-item" onclick="window.switchImage('${encodeURI(img)}', this)">
+                                <img src="${encodeURI(img)}">
+                            </div>
+                        `).join('');
+                    } else {
+                        // Fallback/Placeholder if only few images
+                        interiorThumbGrid.innerHTML = `
+                             <div class="thumb-item" onclick="window.switchImage('${encodeURI(car.image)}', this)"><img src="${encodeURI(car.image)}"></div>
+                             <div class="thumb-item" style="background:#eee; display:flex; align-items:center; justify-content:center; color:#999; font-size:0.7rem; text-align:center;">Coming Soon</div>
+                        `;
+                    }
+                }
+
+                window.switchImage = (src, thumb) => {
+                    mainImg.src = src;
+                    document.querySelectorAll('.thumb-item').forEach(t => t.classList.remove('active'));
+                    thumb.classList.add('active');
+                };
+
+
+                document.getElementById('stockId').innerText = `CAR-${car.id.toString().padStart(4, '0')}`;
+                document.getElementById('carTitle').innerText = `${car.year} ${car.brand} ${car.model} ${car.condition === 'Foreign Used' ? 'ZS' : ''}`.toUpperCase();
+                document.getElementById('carPrice').innerText = `GHS ${car.price.toLocaleString()}`;
+                document.getElementById('basePrice').innerText = `GHS ${(Math.floor(car.price * 0.8)).toLocaleString()}`;
+                document.getElementById('carPriceInput').value = car.price;
+                
+                document.getElementById('specMileage').innerText = car.mileage ? car.mileage.toLocaleString() + 'km' : (Math.floor(Math.random() * 80000) + 20000).toLocaleString() + 'km';
+                document.getElementById('specTrans').innerText = car.transmission || 'Auto';
+                document.getElementById('specFuel').innerText = car.fuel || 'Petrol';
+
+                document.getElementById('detailsAddToCartBtn').onclick = () => {
+                    import('./js/ui/app.js').then(module => {
+                        module.UI.addToCart(car);
+                    });
+                };
+
+                document.getElementById('loadingMsg').classList.add('hidden');
+                document.getElementById('carDetailsContainer').classList.remove('hidden');
+
+            } catch (err) {
+                document.getElementById('loadingMsg').innerText = err.message;
+            }
+        };
+
+        // Real-time calculation
+        const updateCalc = () => {
+            if(!currentCar) return;
+            const dp = Number(document.getElementById('downPayment').value);
+            const mos = Number(document.getElementById('months').value);
+            if(dp > 0 && mos > 0 && dp < currentCar.price) {
+                const res = InstallmentAPI.calculate(currentCar.price, dp, mos);
+                if(!res.error) {
+                    document.getElementById('calcResult').innerText = `GHS ${res.monthlyPayment.toFixed(2)}`;
+                }
+            } else {
+                document.getElementById('calcResult').innerText = "GHS 0";
+            }
+        };
+
+        document.getElementById('downPayment').addEventListener('input', updateCalc);
+        document.getElementById('months').addEventListener('change', updateCalc);
+
+        // Submit installment
+        document.getElementById('installmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alert = document.getElementById('insAlert');
+            const dp = Number(document.getElementById('downPayment').value);
+            const mos = Number(document.getElementById('months').value);
+
+            try {
+                const msg = await InstallmentAPI.apply(currentCar.id, currentCar.price, dp, mos);
+                alert.innerText = msg;
+                alert.className = 'alert success';
+                alert.classList.remove('hidden');
+                document.getElementById('installmentForm').reset();
+                document.getElementById('calcResult').innerText = "GHS 0";
+            } catch (err) {
+                alert.innerText = err.message;
+                alert.className = 'alert error';
+                alert.classList.remove('hidden');
+            }
+        });
+
+        // Submit message
+        document.getElementById('messageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alert = document.getElementById('msgAlert');
+            const text = document.getElementById('messageText').value;
+
+            try {
+                // To Admin
+                await ChatAPI.sendMessage('admin', text, currentCar.id);
+                alert.innerText = "Message sent to seller";
+                alert.className = 'alert success';
+                alert.classList.remove('hidden');
+                document.getElementById('messageForm').reset();
+            } catch (err) {
+                alert.innerText = err.message || "Failed to send message";
+                alert.className = 'alert error';
+                alert.classList.remove('hidden');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadCar);
+    </script>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/233244240166" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CarsMarketplace</title>
+    <link rel="stylesheet" href="css/style.css">`n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .admin-form input, .admin-form select { width: 100%; border: 1px solid var(--border); padding: 10px; border-radius: 4px; }
+        .admin-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .admin-form .full { grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo"><img src="assets/images/logo.jpg" alt="Global Drive Africa"></a>
+            <div class="auth-nav">
+                <a href="#" id="logoutBtn" class="btn btn-main">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <ul>
+                <li><a href="#" class="active" data-target="inventory">Manage Inventory</a></li>
+                <li><a href="#" data-target="installments">Installment Requests</a></li>
+                <li><a href="#" data-target="messages">Messages</a></li>
+                <li><a href="#" data-target="users">Users</a></li>
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <h1 style="color: var(--secondary-color); margin-bottom: 20px;">Admin Panel</h1>
+
+            <!-- Inventory Management -->
+            <section id="inventory" class="dash-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Cars Inventory</h2>
+                    <button class="btn btn-main" id="showAddCarBtn">+ Add New Car</button>
+                </div>
+
+                <!-- Add Car Form (Hidden by default) -->
+                <div id="addCarFormContainer" class="hidden" style="background: white; padding: 25px; border-radius: 8px; box-shadow: var(--shadow); margin-bottom: 30px;">
+                    <h3>Add New Listing</h3>
+                    <div id="addAlert" class="alert hidden"></div>
+                    <form id="addCarForm" class="admin-form" style="margin-top: 15px;">
+                        <div class="row">
+                            <div><label>Brand</label><select id="nBrand" required><option>Toyota</option><option>Honda</option><option>Hyundai</option></select></div>
+                            <div><label>Model</label><input type="text" id="nModel" required></div>
+                        </div>
+                        <div class="row">
+                            <div><label>Year</label><input type="number" id="nYear" required></div>
+                            <div><label>Price (GHS)</label><input type="number" id="nPrice" required></div>
+                        </div>
+                        <div class="row">
+                            <div><label>Condition</label><select id="nCond" required><option>New</option><option>Foreign Used</option><option>Locally Used</option></select></div>
+                            <div><label>Transmission</label><select id="nTrans" required><option>Automatic</option><option>Manual</option></select></div>
+                        </div>
+                        <div class="row">
+                            <div><label>Fuel</label><select id="nFuel" required><option>Petrol</option><option>Diesel</option><option>Electric</option></select></div>
+                            <div><label>Status</label><select id="nStatus" required><option value="available">Available</option><option value="sold">Sold</option></select></div>
+                        </div>
+                        <div class="row full">
+                            <div><label>Car Image (Upload Local)</label>
+                                <input type="file" id="nImage" accept="image/*" required>
+                                <small style="color:var(--text-light);">Will be stored as base64 in IndexedDB to simulate local uploads without node backend</small>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-main" style="width:100%; padding:15px; font-size:16px;">Save Car</button>
+                    </form>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Car</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminCarsList"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Installments -->
+            <section id="installments" class="dash-section hidden">
+                <h2>Pending Installments</h2>
+                <div style="overflow-x: auto; margin-top: 20px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Car ID</th>
+                                <th>Months</th>
+                                <th>Monthly (GHS)</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminInsList"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Messages -->
+            <section id="messages" class="dash-section hidden">
+                <h2>Recent Messages</h2>
+                <div id="adminMsgsList" style="margin-top: 20px;"></div>
+                
+                <div style="margin-top: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: var(--shadow);">
+                    <h3>Reply to User</h3>
+                    <form id="replyMsgForm" class="admin-form">
+                        <input type="number" id="replyUserId" placeholder="User ID" required style="margin-bottom:10px;">
+                        <textarea id="replyText" rows="3" required placeholder="Type reply..."></textarea>
+                        <button type="submit" class="btn btn-main" style="margin-top:10px;">Send Reply</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Users -->
+            <section id="users" class="dash-section hidden">
+                <h2>System Users</h2>
+                <div style="overflow-x: auto; margin-top: 20px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersList"></tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script type="module">
+        import { AuthAPI } from './js/auth/auth.js';
+        import { Session } from './js/security/crypto.js';
+        import { dbInstance } from './js/database/db.js';
+        import { InstallmentAPI } from './js/installment/calculator.js';
+        import { ChatAPI } from './js/messaging/chat.js';
+        import { UI } from './js/ui/app.js';
+
+        // Check Auth Middleware - strictly 'admin' role
+        const session = AuthAPI.checkAuth('admin');
+        if (!session) throw new Error("Abort");
+
+        document.getElementById('logoutBtn').addEventListener('click', () => { AuthAPI.logout(); });
+
+        // Toggles
+        const links = document.querySelectorAll('.sidebar a');
+        const sections = document.querySelectorAll('.dash-section');
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                links.forEach(l => l.classList.remove('active'));
+                sections.forEach(s => s.classList.add('hidden'));
+
+                link.classList.add('active');
+                const target = link.getAttribute('data-target');
+                document.getElementById(target).classList.remove('hidden');
+            });
+        });
+
+        document.getElementById('showAddCarBtn').addEventListener('click', () => {
+             document.getElementById('addCarFormContainer').classList.toggle('hidden');
+        });
+
+        // Load Admin Data
+        const loadAdminData = async () => {
+            // Cars
+            const cars = await dbInstance.getAll('cars');
+            const cList = document.getElementById('adminCarsList');
+            cList.innerHTML = cars.map(c => `
+                <tr>
+                    <td>#${c.id}</td>
+                    <td>${UI.sanitize(String(c.year))} ${UI.sanitize(c.brand)} ${UI.sanitize(c.model)}</td>
+                    <td>GHS ${c.price.toLocaleString()}</td>
+                    <td><span style="color:${c.status==='available'?'green':'red'};">${UI.sanitize(c.status)}</span></td>
+                    <td><button onclick="window.deleteCar(${c.id})" style="padding:4px 8px; background:var(--danger); color:white; border:none; border-radius:4px; cursor:pointer;">Delete</button></td>
+                </tr>
+            `).join('');
+
+            // Installments
+            const installs = await InstallmentAPI.getAllApplications();
+            const iList = document.getElementById('adminInsList');
+            iList.innerHTML = installs.map(i => `
+                <tr>
+                    <td>#${i.id}</td>
+                    <td>${i.userName} (ID: ${i.userId})</td>
+                    <td>#${i.carId}</td>
+                    <td>${i.months}</td>
+                    <td>${i.monthlyPayment.toFixed(2)}</td>
+                    <td>${i.status.toUpperCase()}</td>
+                    <td>
+                        ${i.status === 'pending' ? `
+                            <button onclick="window.approveInstall(${i.id})" style="padding:4px 8px; background:var(--success); color:white; border:none; border-radius:4px; cursor:pointer;">Approve</button>
+                            <button onclick="window.rejectInstall(${i.id})" style="padding:4px 8px; background:var(--danger); color:white; border:none; border-radius:4px; cursor:pointer;">Reject</button>
+                        ` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Users
+            const users = await dbInstance.getAll('users');
+            document.getElementById('adminUsersList').innerHTML = users.map(u => `
+                <tr><td>${u.id}</td><td>${UI.sanitize(u.name)}</td><td>${UI.sanitize(u.email)}</td><td>${UI.sanitize(u.role)}</td></tr>
+            `).join('');
+
+            // Messages
+            const msgs = await ChatAPI.getAdminMessages();
+            document.getElementById('adminMsgsList').innerHTML = msgs.map(m => `
+                <div style="background:white; padding:15px; border-radius:8px; margin-bottom:10px; box-shadow:var(--shadow);">
+                    <strong>${UI.sanitize(m.senderName || 'Admin')} (User ID: ${m.senderId}) -> User ID: ${m.receiverId}:</strong>
+                    <p style="margin:5px 0;">${UI.sanitize(m.text)}</p>
+                    <small>${new Date(m.timestamp).toLocaleString()}</small>
+                </div>
+            `).join('');
+        };
+
+        // Adding a Car with Base64 Local Image Reading
+        document.getElementById('addCarForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('nImage');
+            const file = fileInput.files[0];
+            
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const base64Image = e.target.result;
+
+                const newCar = {
+                    brand: document.getElementById('nBrand').value,
+                    model: document.getElementById('nModel').value,
+                    year: Number(document.getElementById('nYear').value),
+                    price: Number(document.getElementById('nPrice').value),
+                    condition: document.getElementById('nCond').value,
+                    transmission: document.getElementById('nTrans').value,
+                    fuel: document.getElementById('nFuel').value,
+                    status: document.getElementById('nStatus').value,
+                    image: base64Image
+                };
+
+                try {
+                    await dbInstance.insert('cars', newCar);
+                    document.getElementById('addAlert').innerText = "Car added successfully!";
+                    document.getElementById('addAlert').className = 'alert success';
+                    document.getElementById('addAlert').classList.remove('hidden');
+                    document.getElementById('addCarForm').reset();
+                    loadAdminData();
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Reply Message
+        document.getElementById('replyMsgForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userId = Number(document.getElementById('replyUserId').value);
+            const text = document.getElementById('replyText').value;
+            await ChatAPI.sendMessage(userId, text);
+            document.getElementById('replyMsgForm').reset();
+            loadAdminData();
+        });
+
+        // Global functions for inline onclick
+        window.deleteCar = async (id) => {
+            if(confirm("Delete this car?")) {
+                await dbInstance.delete('cars', id);
+                loadAdminData();
+            }
+        };
+
+        window.approveInstall = async (id) => {
+            await InstallmentAPI.updateStatus(id, 'approved');
+            loadAdminData();
+        };
+
+        window.rejectInstall = async (id) => {
+            await InstallmentAPI.updateStatus(id, 'rejected');
+            loadAdminData();
+        };
+
+        document.addEventListener('DOMContentLoaded', loadAdminData);
+    </script>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/233244240166" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+</body>
+</html>

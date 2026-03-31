@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Global drive Africa</title>
+    <link rel="stylesheet" href="css/style.css">`n    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body style="background: var(--bg-light);">
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo"><img src="assets/images/logo.jpg" alt="Global Drive Africa"></a>
+        </nav>
+    </header>
+
+    <main class="auth-container">
+        <form class="auth-form" id="registerForm">
+            <h2>Create an Account</h2>
+            <div id="alertBox" class="alert"></div>
+            
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="name" required placeholder="John Doe">
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="email" required placeholder="example@gmail.com">
+            </div>
+            
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" required placeholder="********" minlength="6">
+            </div>
+            
+            <button type="submit" class="btn btn-main form-btn" id="regBtn">Register</button>
+            <p style="text-align: center; margin-top: 15px; font-size: 0.9em;">
+                Already have an account? <a href="login.html" style="color: var(--primary-color);">Login here</a>
+            </p>
+        </form>
+    </main>
+
+    <script type="module">
+        import { AuthAPI } from './js/auth/auth.js';
+
+        const form = document.getElementById('registerForm');
+        const alertBox = document.getElementById('alertBox');
+        const regBtn = document.getElementById('regBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            regBtn.textContent = 'Registering...';
+            regBtn.disabled = true;
+
+            try {
+                const msg = await AuthAPI.register(name, email, password);
+                alertBox.textContent = msg;
+                alertBox.className = 'alert success';
+                alertBox.style.display = 'block';
+                
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } catch (err) {
+                alertBox.textContent = err.message || 'Registration failed';
+                alertBox.className = 'alert error';
+                alertBox.style.display = 'block';
+                regBtn.textContent = 'Register';
+                regBtn.disabled = false;
+            }
+        });
+    </script>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/233244240166" class="whatsapp-float" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+</body>
+</html>
